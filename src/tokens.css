@@ -1,0 +1,347 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Design Tokens · 浅色主题（由 DarkMode_DesignTokens.md 反转派生）
+   双域策略：
+   - 冷静钢蓝 = 界面操作域（按钮、选中、进度、链接）
+   - 信号橙   = 物理世界域（三维内的轨迹/高亮航段/包围框/倒计时）
+   - 三维取景区保留深色画布：点云按深底调校，浅底会失真
+   ============================================================ */
+:root {
+  /* surfaces */
+  --bg-base: #EDEFF3;
+  --surface-1: #FFFFFF;
+  --surface-2: #FFFFFF;
+  --surface-3: #EEF0F4;
+  --surface-sunken: #E2E5EB;
+
+  /* text */
+  --text-primary: #1B1F27;
+  --text-secondary: #5A6272;
+  --text-tertiary: #737E90;
+  --text-placeholder: #B0B7C3;
+  --text-inverse: #FFFFFF;
+  --text-link: #4A69B8;
+
+  /* brand —— 冷静克制的钢蓝 */
+  --brand: #4C6BC0;
+  --brand-hover: #5A79CE;
+  --brand-active: #3D57A3;
+  --brand-text: #4A69B8;
+  --brand-subtle-bg: #E8EEFA;
+  --brand-subtle-text: #3D5AA8;
+  --brand-border: #C4D0EC;
+
+  /* semantic */
+  --success: #1FA971; --success-bg: #E4F6EE;
+  --warning: #B97A17; --warning-bg: #FBF1DF;
+  --danger:  #D9453C; --danger-bg:  #FCE9E7;
+  --info:    #4C6BC0; --info-bg:    #EDF1FA;
+
+  /* tags */
+  --tag-gray-bg: #EEF0F4;  --tag-gray-fg: #5A6272;
+  --tag-blue-bg: #EAF0FB;  --tag-blue-fg: #3D5AA8;
+  --tag-green-bg: #E4F6EE; --tag-green-fg: #1E8A61;
+  --tag-red-bg: #FCE9E7;   --tag-red-fg: #C4423A;
+
+  /* border —— 深色低透明度发丝线 */
+  --border-subtle: rgba(16,24,40,.07);
+  --border-default: rgba(16,24,40,.11);
+  --border-strong: rgba(16,24,40,.17);
+  --divider: rgba(16,24,40,.07);
+
+  /* 静默填充：列表项、行内按钮的浅灰底 */
+  --fill-quiet: rgba(16,24,40,.04);
+
+  /* 卡片语言：小圆角 + 淡钢蓝细描边（与 logo 线条同族） */
+  --card-radius: 8px;
+  --card-stroke: rgba(76,107,192,.22);
+
+  /* 深色重点面板：数据锚点用深钢蓝，拉开深浅层次 */
+  --panel-deep: linear-gradient(135deg, #2C3D63 0%, #1F2C49 100%);
+  --panel-deep-text: #FFFFFF;
+  --panel-deep-sub: rgba(255,255,255,.62);
+
+  /* glass 浮层 */
+  --glass-bg: rgba(255,255,255,.96);
+  --glass-bar: rgba(250,251,252,.88);
+
+  /* elevation */
+  --shadow-popover: 0 6px 20px rgba(16,24,40,.10);
+  --shadow-modal: 0 16px 48px rgba(16,24,40,.18);
+  --shadow-card: 0 1px 2px rgba(16,24,40,.04), 0 2px 10px rgba(16,24,40,.045);
+  --glow-brand: 0 3px 12px rgba(76,107,192,.20);
+  --inset-hi: inset 0 1px 0 rgba(255,255,255,.65);
+
+  /* 物理世界域（三维标注色；-ink 为浅底上的文字版） */
+  --sig3d: #E8792B;
+  --sig3d-ink: #BC5F16;
+  --sig3d-border: #E8B48C;
+  --grain: #E8C87A;
+  --grain-d: #6B5A3E;
+  --struct: #3D4B5C;
+
+  /* 三维取景区画布（浅色，与整体一致） */
+  --canvas: #E9ECF1;
+  --sidebar-w: 216px;
+
+  /* ---- 旧命名别名（组件层沿用） ---- */
+  --ink: var(--bg-base);
+  --ink2: var(--surface-1);
+  --ink3: var(--surface-3);
+  --line: var(--border-default);
+  --txt: var(--text-primary);
+  --txt2: var(--text-secondary);
+  --txt3: var(--text-tertiary);
+  --sig: var(--brand);
+  --sig-d: var(--brand-border);
+  --warn: var(--danger);
+  --hi: var(--success);
+  --mid: var(--warning);
+  --lo: var(--danger);
+
+  /* typography */
+  --font-sans: "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Roboto Mono", Menlo, monospace;
+}
+
+@theme {
+  --color-ink: #F4F5F7;
+  --color-ink2: #FFFFFF;
+  --color-ink3: #EEF0F4;
+  --color-line: oklch(0.25 0.02 260 / 11%);
+  --color-txt: #1B1F27;
+  --color-txt2: #5A6272;
+  --color-txt3: #737E90;
+  --color-brand: #4C6BC0;
+  --color-sig: #4C6BC0;
+  --color-warn: #D9453C;
+  --color-hi: #1FA971;
+  --color-mid: #B97A17;
+  --color-lo: #D9453C;
+  --font-sans: "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Roboto Mono", Menlo, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: #E7E9ED;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* { box-sizing: border-box; }
+
+input, textarea, button { font-family: inherit; letter-spacing: 0.02em; }
+
+/* 密码掩码：紧凑圆点，不继承中文字距与字体 */
+input[type="password"] {
+  letter-spacing: 0 !important;
+  font-family: -apple-system, system-ui, Arial, sans-serif !important;
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+.mono { font-family: var(--font-mono); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+
+/* 可按压元素统一微反馈：轻缩 + 降不透明度 */
+.pressable { transition: transform .12s ease, opacity .12s ease; }
+.pressable:active { transform: scale(.97); opacity: .82; }
+
+/* 底部浮层滑入 */
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sheet-in { animation: sheet-in .24s cubic-bezier(.32,.72,.35,1) both; }
+
+/* 居中弹窗浮现 */
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.dialog-in { animation: dialog-in .18s ease-out both; }
+
+/* 遮罩淡入 */
+@keyframes mask-in { from { opacity: 0; } to { opacity: 1; } }
+.mask-in { animation: mask-in .18s ease-out both; }
+
+/* 数据标签 */
+.dlabel {
+  font-size: 10px;
+  letter-spacing: .06em;
+  color: var(--text-tertiary);
+}
+
+/* 检查项逐项亮起 */
+@keyframes check-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.check-in { animation: check-in .28s ease-out both; }
+
+/* 当前处理阶段光圈（品牌蓝） */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(76,107,192,.4); }
+  70%  { box-shadow: 0 0 0 7px rgba(76,107,192,0); }
+  100% { box-shadow: 0 0 0 0 rgba(76,107,192,0); }
+}
+.pulse-ring { animation: pulse-ring 1.4s ease-out infinite; }
+
+/* 飞行中回归条光圈（信号橙） */
+@keyframes pulse-ring-sig {
+  0%   { box-shadow: 0 0 0 0 rgba(232,121,43,.4); }
+  70%  { box-shadow: 0 0 0 7px rgba(232,121,43,0); }
+  100% { box-shadow: 0 0 0 0 rgba(232,121,43,0); }
+}
+.pulse-ring-sig { animation: pulse-ring-sig 1.4s ease-out infinite; }
+
+/* 倒计时数字 */
+@keyframes count-pop {
+  from { opacity: 0; transform: scale(1.18); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.count-pop { animation: count-pop .32s ease-out both; }
+
+/* 进度条填充 */
+.bar-fill { transition: width .33s linear; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 起飞过渡：从倒计时页平滑淡入三维画面 */
+@keyframes scene-fade { from { opacity: 1; } to { opacity: 0; } }
+.scene-fade {
+  animation: scene-fade .9s ease-out .15s forwards;
+  pointer-events: none;
+}
+
+/* 数据包流动：无人机 → 手机 */
+@keyframes packet-move {
+  0%   { left: 0;                 opacity: 0; }
+  12%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: calc(100% - 6px);  opacity: 0; }
+}
+.packet {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--brand);
+  animation: packet-move 1.7s linear infinite;
+}
+
+/* 状态点呼吸 */
+@keyframes dot-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.dot-breathe { animation: dot-breathe 1.6s ease-in-out infinite; }
+
+/* 无人机线框悬浮 */
+@keyframes hover-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.hover-float { animation: hover-float 3.2s ease-in-out infinite; }
+
+/* 旋翼旋转 */
+.rotor-spin {
+  animation: spin 2.4s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.rotor-spin-slow {
+  animation: spin 7s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 停障探测：声呐弧线依次亮起 */
+@keyframes sonar-arc {
+  0%, 100% { opacity: .15; }
+  30% { opacity: 1; }
+}
+.sonar-arc { animation: sonar-arc 1.5s ease-in-out infinite; }
+.sonar-arc-2 { animation: sonar-arc 1.5s ease-in-out .25s infinite; }
+.sonar-arc-3 { animation: sonar-arc 1.5s ease-in-out .5s infinite; }
+
+/* ============================================================
+   Web 数据中心 · 桌面端补充
+   ============================================================ */
+html, body, #root { background: var(--bg-base); }
+body { min-width: 960px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(16,24,40,.14); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(16,24,40,.24); }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: var(--text-link); text-decoration: none; }
+button { background: transparent; border: none; padding: 0; color: inherit; }
+
+/* 数据表 */
+.dtable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.dtable th {
+  text-align: left; font-weight: 500; font-size: 11px; letter-spacing: .04em;
+  color: var(--text-tertiary); padding: 9px 12px;
+  border-bottom: 1px solid var(--border-default); background: var(--surface-3);
+  white-space: nowrap;
+}
+.dtable td { padding: 11px 12px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+.dtable tbody tr { transition: background .12s; }
+.dtable tbody tr:hover { background: var(--fill-quiet); }
+.dtable tbody tr.row-link { cursor: pointer; }
+.dtable tbody tr.row-on { background: var(--brand-subtle-bg); }
+
+/* 侧栏导航项 */
+.navitem {
+  display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px;
+  border-radius: 8px; font-size: 13px; color: var(--text-secondary); cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.navitem:hover { background: var(--fill-quiet); color: var(--text-primary); }
+.navitem.on { background: var(--brand-subtle-bg); color: var(--brand-subtle-text); font-weight: 500; }
+
+/* 页签 */
+.ptab {
+  height: 38px; padding: 0 4px; margin-right: 22px; font-size: 13.5px; cursor: pointer;
+  color: var(--text-secondary); border-bottom: 2px solid transparent; transition: color .12s;
+}
+.ptab:hover { color: var(--text-primary); }
+.ptab.on { color: var(--brand-subtle-text); border-bottom-color: var(--brand); font-weight: 500; }
+
+/* 输入框 */
+.input {
+  height: 36px; padding: 0 12px; border-radius: 8px; font-size: 13px; outline: none;
+  background: var(--surface-1); border: 1px solid var(--border-default); color: var(--text-primary);
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(76,107,192,.14); }
+.input::placeholder { color: var(--text-placeholder); }
+
+/* 筛选胶囊 */
+.chip {
+  height: 28px; padding: 0 11px; border-radius: 999px; font-size: 12px; cursor: pointer;
+  background: var(--surface-3); color: var(--text-secondary); border: 1px solid transparent;
+  transition: all .12s; white-space: nowrap;
+}
+.chip:hover { color: var(--text-primary); }
+.chip.on { background: var(--brand-subtle-bg); color: var(--brand-subtle-text); border-color: var(--brand-border); font-weight: 500; }
+
+/* 进度条填充 */
+.fill-anim { transition: width .4s ease; }
+
+/* 打印：只留报告纸面 */
+@media print {
+  body { background: #FFFFFF; min-width: 0; }
+  .no-print { display: none !important; }
+  .print-sheet { box-shadow: none !important; border: none !important; margin: 0 !important; }
+}
