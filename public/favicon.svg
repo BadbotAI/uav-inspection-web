@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 网页端页签：电脑 + 无人机 -->
+  <rect x="3" y="11" width="19" height="13.5" rx="2.2" fill="#4C6BC0"/>
+  <rect x="10.5" y="24.5" width="4" height="3" fill="#4C6BC0"/>
+  <rect x="7" y="27.5" width="11" height="2.2" rx="1.1" fill="#4C6BC0"/>
+  <g fill="#2C3D63">
+    <rect x="21.5" y="4.5" width="7" height="7" rx="1.8"/>
+    <circle cx="19.5" cy="2.5" r="2.1"/>
+    <circle cx="30.5" cy="2.5" r="2.1"/>
+    <circle cx="19.5" cy="13.5" r="2.1"/>
+    <circle cx="30.5" cy="13.5" r="2.1"/>
+  </g>
+</svg>

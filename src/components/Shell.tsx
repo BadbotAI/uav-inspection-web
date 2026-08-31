@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useStore, ACCOUNT, type SyncOutcome } from '../store';
-import { Button, Modal, Toast, IconLink, IconBox, IconTrend, IconDownload, IconPlus, IconCheck, IconWarn, IconSync, IconChevronRight, fmtDT } from './ui';
+import { Button, Modal, Toast, IconLink, IconBox, IconTrend, IconPlus, IconCheck, IconWarn, IconSync, IconChevronRight, fmtDT } from './ui';
 
 function Mark({ size = 30 }: { size?: number }) {
   return (
@@ -25,11 +25,10 @@ const NAV = [
   { to: '/sync', label: '同步数据', icon: <IconLink size={15} /> },
   { to: '/tasks', label: '任务数据', icon: <IconBox size={15} /> },
   { to: '/analysis', label: '数据分析', icon: <IconTrend size={15} /> },
-  { to: '/downloads', label: '下载导出', icon: <IconDownload size={15} /> },
 ];
 
 const TITLES: Record<string, string> = {
-  '/sync': '同步数据', '/tasks': '任务数据', '/analysis': '数据分析', '/downloads': '下载导出',
+  '/sync': '同步数据', '/tasks': '任务数据', '/analysis': '数据分析',
 };
 
 // 同步码接入弹窗：支持一次粘贴多个码，逐个校验、拉取并给出结果
@@ -131,7 +130,6 @@ export function SyncModal() {
 export function Shell() {
   const loc = useLocation();
   const set = useStore(s => s.set);
-  const running = useStore(s => s.downloads.filter(d => d.state !== 'done').length);
   const base = '/' + (loc.pathname.split('/')[1] || 'tasks');
   const title = TITLES[base] ?? '仓储无人机巡检 · 数据中心';
 
@@ -154,9 +152,6 @@ export function Shell() {
             <NavLink key={n.to} to={n.to} className={({ isActive }) => `navitem ${isActive ? 'on' : ''}`}>
               <span style={{ display: 'inline-flex', opacity: .9 }}>{n.icon}</span>
               <span className="flex-1">{n.label}</span>
-              {n.to === '/downloads' && running > 0 && (
-                <span className="mono" style={{ fontSize: 10, padding: '1px 6px', borderRadius: 999, background: 'var(--brand)', color: '#FFFFFF' }}>{running}</span>
-              )}
             </NavLink>
           ))}
         </nav>

@@ -4,7 +4,6 @@ import { Sync } from './pages/Sync';
 import { Tasks } from './pages/Tasks';
 import { TaskDetail } from './pages/TaskDetail';
 import { Trends } from './pages/Trends';
-import { Downloads } from './pages/Downloads';
 
 export default function App() {
   return (
@@ -15,7 +14,6 @@ export default function App() {
         <Route path="tasks" element={<Tasks />} />
         <Route path="tasks/:id" element={<TaskDetail />} />
         <Route path="analysis" element={<Trends />} />
-        <Route path="downloads" element={<Downloads />} />
         <Route path="*" element={<Navigate to="/tasks" replace />} />
       </Route>
     </Routes>

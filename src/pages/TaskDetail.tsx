@@ -71,7 +71,7 @@ export function TaskDetail() {
       const att = atts.find(a => a.key === k)!;
       downloadJson(att.name, k === 'events' ? proc.events : k === 'volume' ? { taskId: task.id, totalVolumeM3: vol, stacks: task.stacks } : { taskId: task.id, totalCount: totalCount(task), stacks: task.stacks.map(s => ({ id: s.id, name: s.name, tagType: s.tagType, tagCode: s.tagCode, layerCount: s.layerCount, perLayerCount: s.perLayerCount, totalCount: s.totalCount })) });
     });
-    showToast(keys === 'all' ? '已加入下载队列：完整数据包' : `已加入下载队列：${keys.length} 个文件`);
+    showToast(keys === 'all' ? '已开始下载完整数据包' : `已开始下载 ${keys.length} 个文件`);
   };
 
   return (

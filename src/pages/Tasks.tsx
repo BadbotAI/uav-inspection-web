@@ -49,9 +49,8 @@ export function Tasks() {
   const batchDownload = () => {
     const list = tasks.filter(t => picked.has(t.id));
     list.forEach(t => enqueue(t, 'all'));
-    showToast(`已加入下载队列：${list.length} 个数据包`);
+    showToast(`已开始下载 ${list.length} 个数据包`);
     setPicked(new Set());
-    navigate('/downloads');
   };
 
   const chipBtn = (on: boolean, label: string, onClick: () => void) => (
@@ -80,10 +79,17 @@ export function Tasks() {
             {chipBtn(status === 'aborted', '中断', () => setStatus('aborted'))}
           </div>
           <span style={{ width: 1, height: 20, background: 'var(--border-subtle)' }} />
-          <div className="flex flex-wrap items-center gap-1.5">
-            {chipBtn(scene === 'all', '全部场景', () => setScene('all'))}
-            {SCENES.map(sc => chipBtn(scene === sc.id, sc.name, () => setScene(sc.id)))}
-          </div>
+          {/* 场景筛选：下拉框 */}
+          <select
+            className="input"
+            style={{ width: 150, cursor: 'pointer', color: scene === 'all' ? 'var(--text-secondary)' : 'var(--text-primary)' }}
+            value={scene}
+            onChange={e => setScene(e.target.value)}
+            aria-label="按场景筛选"
+          >
+            <option value="all">全部场景</option>
+            {SCENES.map(sc => <option key={sc.id} value={sc.id}>{sc.name}</option>)}
+          </select>
           <div className="ml-auto flex items-center gap-2">
             {picked.size > 0 && <span className="mono" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>已选 {picked.size} 个</span>}
             <Button small variant={picked.size ? 'primary' : 'secondary'} disabled={picked.size === 0} icon={<IconDownload size={13} />} onClick={batchDownload}>打包下载</Button>
@@ -150,7 +156,7 @@ export function Tasks() {
                       <td style={{ textAlign: 'right' }}>
                         <div className="inline-flex items-center gap-1.5">
                           <Button small variant="secondary" onClick={e => { e.stopPropagation(); navigate(`/tasks/${t.id}?tab=report`); }}>报告</Button>
-                          <Button small variant="secondary" icon={<IconDownload size={12} />} title="打包下载" onClick={e => { e.stopPropagation(); enqueue(t, 'all'); showToast('已加入下载队列'); }} />
+                          <Button small variant="secondary" icon={<IconDownload size={12} />} title="打包下载" onClick={e => { e.stopPropagation(); enqueue(t, 'all'); showToast('已开始下载数据包'); }} />
                         </div>
                       </td>
                     </tr>
