@@ -93,7 +93,7 @@ export function Trends() {
         <Section title="异常变化" style={{ marginTop: 20 }}>
           <Card pad={0} style={{ overflow: 'hidden' }}>
             {abnormal.map((a, i) => (
-              <button key={i} className="w-full flex items-center gap-3 text-left pressable" style={{ padding: '11px 16px', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none', cursor: 'pointer' }} onClick={() => navigate(`/tasks/${a.task.id}?tab=detail`)}>
+              <button key={i} className="w-full flex items-center gap-3 text-left pressable" style={{ padding: '11px 16px', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none', cursor: 'pointer' }} onClick={() => navigate(`/tasks/${a.task.id}`)}>
                 <span style={{ color: 'var(--warning)', display: 'inline-flex' }}><IconWarn size={14} /></span>
                 <span style={{ fontSize: 13, fontWeight: 500 }}>{a.stack.name}</span>
                 <span className="mono" style={{ fontSize: 12, color: a.pct > 0 ? 'var(--brand-subtle-text)' : 'var(--sig3d-ink)' }}>{a.pct > 0 ? '+' : ''}{a.pct.toFixed(1)}%</span>

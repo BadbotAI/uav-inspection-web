@@ -295,7 +295,9 @@ button { background: transparent; border: none; padding: 0; color: inherit; }
   border-bottom: 1px solid var(--border-default); background: var(--surface-3);
   white-space: nowrap;
 }
-.dtable td { padding: 11px 12px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+.dtable td { padding: 10px 10px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+.dtable td.mono, .dtable td .mono { white-space: nowrap; }
+.dtable.wide { min-width: 1180px; }
 .dtable tbody tr { transition: background .12s; }
 .dtable tbody tr:hover { background: var(--fill-quiet); }
 .dtable tbody tr.row-link { cursor: pointer; }

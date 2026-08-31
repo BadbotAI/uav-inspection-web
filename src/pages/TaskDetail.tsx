@@ -15,8 +15,8 @@ import {
 } from '../components/ui';
 import type { Task, Attachment } from '../types';
 
-type Tab = 'overview' | 'model' | 'process' | 'detail' | 'report' | 'files';
-const TABS: [Tab, string][] = [['overview', '概览'], ['model', '三维成果'], ['process', '飞行过程'], ['detail', '明细'], ['report', '报告'], ['files', '附件']];
+type Tab = 'overview' | 'model' | 'process' | 'report' | 'files';
+const TABS: [Tab, string][] = [['overview', '概览'], ['model', '三维成果'], ['process', '飞行过程'], ['report', '报告'], ['files', '附件下载']];
 const DENSITY = 0.75;
 const RETURN_TEXT: Record<Task['returnTrigger'], string> = {
   route_complete: '航线执行完成', user: '操作员手动返航', auto_timeout: '悬停超时自动返航', safety: '安全返航', rc_override: '遥控器接管',
@@ -49,7 +49,7 @@ export function TaskDetail() {
 
   if (!task || !sync || !procMemo) {
     return (
-      <EmptyState icon={<IconWarn size={22} />} text="该任务尚未接入网页端" sub={`任务 ${id} 不在任务库中。请在手机端复制该次巡检的同步码后接入。`} actionText="接入同步码" onAction={() => set({ syncModalOpen: true })} />
+      <EmptyState icon={<IconWarn size={22} />} text="该任务尚未同步" sub={`任务 ${id} 还没有同步到网页端。请在手机端复制该次巡检的同步码后同步。`} actionText="同步数据" onAction={() => set({ syncModalOpen: true })} />
     );
   }
 
@@ -126,32 +126,14 @@ export function TaskDetail() {
               </div>
             </div>
             <div className="flex flex-col gap-4">
-              <Section title={`${unit}明细`} right={<button className="pressable" style={{ fontSize: 12, color: 'var(--text-link)', cursor: 'pointer' }} onClick={() => setTab('detail')}>全部</button>}>
-                <Card pad={0} style={{ overflow: 'hidden' }}>
-                  {task.stacks.map((s, i) => (
-                    <button key={s.id} className="w-full flex items-center gap-3 text-left" style={{ padding: '10px 14px', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none', background: selected === i ? 'var(--brand-subtle-bg)' : 'transparent', cursor: 'pointer' }} onClick={() => setSelected(selected === i ? null : i)}>
-                      <div className="flex-1 min-w-0">
-                        <div style={{ fontSize: 13, fontWeight: 500 }}>{s.name} <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 400 }}>{s.position}</span></div>
-                        {s.issue && <div className="inline-flex items-center gap-1 mt-0.5" style={{ fontSize: 11, color: 'var(--warning)' }}><IconWarn size={11} />{ISSUE_TEXT[s.issue]}</div>}
-                      </div>
-                      <div className="text-right">
-                        <div className="mono" style={{ fontSize: 14 }}>{s.totalCount != null ? `${s.totalCount.toLocaleString()} 件` : `${s.volumeM3.toFixed(1)} m³`}</div>
-                        <div className="mono" style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>覆盖 {s.surfaceCoverPct}%</div>
-                      </div>
-                      <ConfPill c={s.volumeConfidence} />
-                    </button>
-                  ))}
-                </Card>
-              </Section>
-              <Section title="接入信息">
+              <Section title="同步信息">
                 <Card pad={0} style={{ overflow: 'hidden' }}>
                   {[
                     ['同步码', <span className="mono">{code}</span>],
                     ['来源设备', <span className="mono">{sync.deviceId}</span>],
-                    ['接入时间', <span className="mono">{fmtDT(sync.syncedAt)}</span>],
+                    ['同步时间', <span className="mono">{fmtDT(sync.syncedAt)}</span>],
                     ['数据包', <span className="mono">{fmtMb(sync.sizeMb)} · {atts.length} 个附件</span>],
                     ['完整性', sync.complete ? <span className="inline-flex items-center gap-1" style={{ color: 'var(--success)' }}><IconCheck size={12} />校验通过</span> : <span className="inline-flex items-center gap-1" style={{ color: 'var(--warning)' }}><IconWarn size={12} />缺 {sync.missing.length} 项</span>],
-                    ['机载路径', <span className="mono break-all" style={{ fontSize: 11 }}>{task.cloudSharePath}</span>],
                   ].map(([k, v], i) => (
                     <div key={i} className="flex items-center gap-3" style={{ padding: '8px 14px', borderTop: i > 0 ? '1px solid var(--border-subtle)' : 'none', fontSize: 12 }}>
                       <span style={{ width: 64, color: 'var(--text-tertiary)' }}>{k}</span><span className="flex-1 min-w-0">{v}</span>
@@ -285,9 +267,10 @@ export function TaskDetail() {
         </div>
       )}
 
-      {/* 明细 */}
-      {tab === 'detail' && (
-        <div className="mt-5">
+      {/* 明细（并入概览页，行点击与三维联动） */}
+      {tab === 'overview' && (
+        <div className="mt-6">
+          <div className="dlabel mb-2.5" style={{ fontSize: 11 }}>{unit}明细</div>
           {issues.length > 0 && (
             <div className="flex items-center gap-2 mb-3" style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--warning-bg)', color: 'var(--warning)', fontSize: 12.5 }}>
               <IconWarn size={14} />{issues.length} 个{unit}存在异常标注，相关体积结果建议复核后再用于账务。
@@ -408,7 +391,7 @@ export function TaskDetail() {
               ))}
             </div>
             <div className="mono mt-8 pt-3 flex justify-between" style={{ borderTop: '1px solid rgba(16,24,40,.12)', fontSize: 10, color: '#B0B7C3' }}>
-              <span>完整数据包约 {fmtMb(packSizeOf(task))} · 由机载端生成，经同步码接入网页端</span>
+              <span>完整数据包约 {fmtMb(packSizeOf(task))} · 由机载端生成，经同步码同步到网页端</span>
               <span>仓储无人机巡检 · 数据中心</span>
             </div>
           </div>
@@ -450,7 +433,7 @@ export function TaskDetail() {
           </Card>
           {!sync.complete && (
             <div className="mt-3 flex items-center gap-2" style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--warning-bg)', color: 'var(--warning)', fontSize: 12.5 }}>
-              <IconWarn size={14} />缺失 {sync.missing.join('、')}。请在手机端该任务的「结果报告」中重新生成同步码并接入，系统会补传缺失附件。
+              <IconWarn size={14} />缺失 {sync.missing.join('、')}。请在手机端该任务的「结果报告」中重新生成同步码再同步一次，系统会补传缺失附件。
             </div>
           )}
           <div className="mt-3" style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>

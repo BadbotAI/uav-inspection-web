@@ -44,6 +44,9 @@ interface WebState {
 
   // 接入同步码：校验 → 拉取（模拟耗时）→ 入库
   ingest: (raw: string) => Promise<SyncOutcome>;
+  // 全量同步：拉取手机端 / 机载端尚未同步到网页端的全部任务
+  pendingTasks: () => Task[];
+  ingestAll: () => Promise<number>;
   enqueueDownload: (task: Task, keys: string[] | 'all') => DownloadRecord[];
   showToast: (msg: string) => void;
   set: (p: Partial<WebState>) => void;
@@ -85,6 +88,18 @@ export const useStore = create<WebState>((set, get) => ({
     };
     set(s => ({ syncs: [record, ...s.syncs] }));
     return { ok: true, task, record, already: false };
+  },
+
+  pendingTasks: () => {
+    const ids = new Set(get().syncs.map(s => s.taskId));
+    return CATALOG.filter(t => !ids.has(t.id));
+  },
+  ingestAll: async () => {
+    const list = get().pendingTasks();
+    for (const t of list) {
+      await get().ingest(syncCodeOf(t.id));
+    }
+    return list.length;
   },
 
   enqueueDownload: (task, keys) => {
