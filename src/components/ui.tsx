@@ -1,5 +1,5 @@
 // 基础组件与格式化：与手机端同一套设计语言（钢蓝 / 浅色 / 细描边卡片），桌面尺寸
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 import type { Task, Confidence } from '../types';
 
@@ -230,6 +230,82 @@ export function CodeChip({ code, copy = true }: { code: string; copy?: boolean }
       <span className="mono" style={{ fontSize: 12.5, padding: '3px 8px', borderRadius: 6, background: 'var(--brand-subtle-bg)', color: 'var(--brand-subtle-text)', letterSpacing: '.04em' }}>{code}</span>
       {copy && <CopyButton text={code} label="" />}
     </span>
+  );
+}
+
+// 自绘下拉选择：与输入框同几何的触发器 + 玻璃浮层选项；点击外部或 Esc 收起
+export function Select({
+  value, options, onChange, width = 160, ariaLabel,
+}: {
+  value: string;
+  options: { value: string; label: string; hint?: string }[];
+  onChange: (v: string) => void;
+  width?: number;
+  ariaLabel?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    window.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDoc); window.removeEventListener('keydown', onKey); };
+  }, [open]);
+  const cur = options.find(o => o.value === value) ?? options[0];
+  const isDefault = cur?.value === options[0]?.value;
+  return (
+    <div ref={ref} className="relative" style={{ width }}>
+      <button
+        className="input w-full flex items-center gap-2 text-left"
+        style={{ cursor: 'pointer', borderColor: open ? 'var(--brand)' : undefined, boxShadow: open ? '0 0 0 3px rgba(76,107,192,.14)' : undefined }}
+        onClick={() => setOpen(v => !v)}
+        aria-expanded={open} aria-haspopup="listbox" aria-label={ariaLabel}
+      >
+        <span className="flex-1 truncate" style={{ color: isDefault ? 'var(--text-secondary)' : 'var(--text-primary)', fontWeight: isDefault ? 400 : 500 }}>
+          {cur?.label}
+        </span>
+        <span style={{ display: 'inline-flex', color: 'var(--text-tertiary)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s' }}>
+          <IconChevronDown size={12} />
+        </span>
+      </button>
+      {open && (
+        <div
+          className="absolute flex flex-col mask-in"
+          role="listbox"
+          style={{
+            left: 0, top: 'calc(100% + 5px)', minWidth: '100%', zIndex: 30, padding: 5, gap: 2,
+            background: 'var(--glass-bg)', backdropFilter: 'blur(14px)', borderRadius: 10,
+            border: '1px solid var(--border-strong)', boxShadow: 'var(--shadow-popover)',
+            maxHeight: 288, overflowY: 'auto',
+          }}
+        >
+          {options.map(o => {
+            const on = o.value === value;
+            return (
+              <button
+                key={o.value}
+                role="option" aria-selected={on}
+                className="flex items-center gap-2 text-left"
+                style={{
+                  padding: '8px 10px', borderRadius: 7, fontSize: 12.5, cursor: 'pointer', whiteSpace: 'nowrap',
+                  background: on ? 'var(--brand-subtle-bg)' : 'transparent',
+                  color: on ? 'var(--brand-subtle-text)' : 'var(--text-primary)', fontWeight: on ? 500 : 400,
+                }}
+                onMouseEnter={e => { if (!on) (e.currentTarget as HTMLElement).style.background = 'var(--fill-quiet)'; }}
+                onMouseLeave={e => { if (!on) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                onClick={() => { onChange(o.value); setOpen(false); }}
+              >
+                <span className="flex-1">{o.label}</span>
+                {o.hint && <span className="mono" style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{o.hint}</span>}
+                {on && <span style={{ display: 'inline-flex' }}><IconCheck size={12} /></span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -5,7 +5,7 @@ import { useStore } from '../store';
 import { SCENES, ROUTES } from '../mock/routes';
 import { syncCodeOf, normalizeCode, CODE_RE } from '../data/sync';
 import { packSizeOf } from '../data/process';
-import { Button, Card, Stat, StatusPill, Check, EmptyState, IconSearch, IconDownload, IconBox, IconWarn, IconLink, fmtDT, fmtMb, totalVolume, totalCount, isStacked } from '../components/ui';
+import { Button, Card, Stat, StatusPill, Check, EmptyState, Select, IconSearch, IconDownload, IconBox, IconWarn, IconLink, fmtDT, fmtMb, totalVolume, totalCount, isStacked } from '../components/ui';
 import type { Task } from '../types';
 
 export function Tasks() {
@@ -61,7 +61,7 @@ export function Tasks() {
     <div>
       {/* 概览 */}
       <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-        <Stat label="已同步任务" value={tasks.length} unit="次" />
+        <Stat label="已同步任务" value={tasks.length} unit="次" sub={`覆盖 ${new Set(tasks.map(sceneOf)).size} 个场景`} />
         <Stat label="累计测算体积" value={totalVol.toLocaleString()} unit="m³" sub="仅统计完成任务" />
         <Stat label="数据总量" value={fmtMb(totalPack).split(' ')[0]} unit={fmtMb(totalPack).split(' ')[1]} sub="点云 / 视频 / 图片 / 报告" />
       </div>
@@ -79,17 +79,17 @@ export function Tasks() {
             {chipBtn(status === 'aborted', '中断', () => setStatus('aborted'))}
           </div>
           <span style={{ width: 1, height: 20, background: 'var(--border-subtle)' }} />
-          {/* 场景筛选：下拉框 */}
-          <select
-            className="input"
-            style={{ width: 150, cursor: 'pointer', color: scene === 'all' ? 'var(--text-secondary)' : 'var(--text-primary)' }}
+          {/* 场景筛选：自绘下拉框（每个场景带已同步次数） */}
+          <Select
+            width={158}
             value={scene}
-            onChange={e => setScene(e.target.value)}
-            aria-label="按场景筛选"
-          >
-            <option value="all">全部场景</option>
-            {SCENES.map(sc => <option key={sc.id} value={sc.id}>{sc.name}</option>)}
-          </select>
+            onChange={setScene}
+            ariaLabel="按场景筛选"
+            options={[
+              { value: 'all', label: '全部场景' },
+              ...SCENES.map(sc => ({ value: sc.id, label: sc.name, hint: `${tasks.filter(t => sceneOf(t) === sc.id).length}` })),
+            ]}
+          />
           <div className="ml-auto flex items-center gap-2">
             {picked.size > 0 && <span className="mono" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>已选 {picked.size} 个</span>}
             <Button small variant={picked.size ? 'primary' : 'secondary'} disabled={picked.size === 0} icon={<IconDownload size={13} />} onClick={batchDownload}>打包下载</Button>
@@ -149,8 +149,9 @@ export function Tasks() {
                         {isStacked(t) ? <>{totalCount(t).toLocaleString()} <span style={{ color: 'var(--text-tertiary)' }}>件</span></> : <>{totalVolume(t).toFixed(1)} <span style={{ color: 'var(--text-tertiary)' }}>m³</span></>}
                       </td>
                       <td>
-                        {issues > 0 || t.status !== 'success'
-                          ? <span className="inline-flex items-center gap-1" style={{ fontSize: 11.5, color: 'var(--warning)', whiteSpace: 'nowrap' }}><IconWarn size={12} />{t.status !== 'success' ? '任务' + (t.status === 'aborted' ? '中断' : '失败') : `${issues} 项`}</span>
+                        {/* 状态列已表达任务级结果，此列只承担明细异常，避免语义重复 */}
+                        {issues > 0
+                          ? <span className="inline-flex items-center gap-1" style={{ fontSize: 11.5, color: 'var(--warning)', whiteSpace: 'nowrap' }}><IconWarn size={12} />{issues} 项</span>
                           : <span style={{ fontSize: 11.5, color: 'var(--text-placeholder)' }}>无</span>}
                       </td>
                       <td style={{ textAlign: 'right' }}>

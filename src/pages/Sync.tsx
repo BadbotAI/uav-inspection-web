@@ -10,6 +10,7 @@ export function Sync() {
   const navigate = useNavigate();
   const ingest = useStore(s => s.ingest);
   const ingestAll = useStore(s => s.ingestAll);
+  const set = useStore(s => s.set);
   const showToast = useStore(s => s.showToast);
   const syncs = useStore(s => s.syncs);
   const pending = useStore(s => s.pendingTasks());
@@ -41,7 +42,10 @@ export function Sync() {
       <div className="flex flex-col gap-4">
         {/* 方式一：同步码 */}
         <Card pad={24}>
-          <div style={{ fontSize: 16, fontWeight: 600 }}>输入同步码</div>
+          <div className="flex items-center">
+            <div style={{ fontSize: 16, fontWeight: 600 }}>输入同步码</div>
+            <button className="ml-auto pressable" style={{ fontSize: 12.5, color: 'var(--text-link)', cursor: 'pointer' }} onClick={() => set({ syncModalOpen: true })}>批量同步</button>
+          </div>
           <div className="mt-1" style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
             手机端「巡检结果 → 结果报告 → 同步到网页端」复制同步码，粘贴到这里。
           </div>

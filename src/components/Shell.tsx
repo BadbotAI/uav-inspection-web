@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useStore, ACCOUNT, type SyncOutcome } from '../store';
-import { Button, Modal, Toast, IconLink, IconBox, IconTrend, IconPlus, IconCheck, IconWarn, IconSync, IconChevronRight, fmtDT } from './ui';
+import { Button, Modal, Toast, IconLink, IconBox, IconTrend, IconCheck, IconWarn, IconSync, IconChevronRight, fmtDT } from './ui';
 
 function Mark({ size = 30 }: { size?: number }) {
   return (
@@ -143,9 +143,6 @@ export function Shell() {
             <div style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: '.04em' }}>仓储无人机巡检</div>
             <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', letterSpacing: '.06em' }}>数据中心</div>
           </div>
-        </div>
-        <div style={{ padding: '0 12px 12px' }}>
-          <Button style={{ width: '100%' }} icon={<IconPlus size={13} />} onClick={() => set({ syncModalOpen: true })}>同步数据</Button>
         </div>
         <nav className="flex flex-col gap-0.5" style={{ padding: '0 10px' }}>
           {NAV.map(n => (

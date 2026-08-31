@@ -108,7 +108,7 @@ export function TaskDetail() {
       {/* 概览 */}
       {tab === 'overview' && (
         <div className="mt-5">
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(172px, 1fr))', gap: 12 }}>
             <Stat label={stacked ? '合计件数' : '合计体积'} value={stacked ? totalCount(task).toLocaleString() : vol.toFixed(1)} unit={stacked ? '件' : 'm³'} sub={stacked ? `${vol.toFixed(1)} m³ · ${task.stacks.length} 个货位` : `折算 ${(vol * DENSITY).toFixed(1)} t · ${task.stacks.length} 个堆体`} />
             <Stat label="覆盖度" value={task.coveragePct} unit="%" sub={`完成航点 ${task.waypointDone}/${task.waypointTotal}`} tone={task.coveragePct < 100 ? 'warning' : undefined} />
             <Stat label="体积误差" value={`±${task.volumeErrPct.toFixed(1)}`} unit="%" sub="规格上限 ±5%" tone={task.volumeErrPct > 4 ? 'warning' : undefined} />

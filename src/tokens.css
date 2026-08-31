@@ -287,6 +287,13 @@ body { min-width: 960px; }
 a { color: var(--text-link); text-decoration: none; }
 button { background: transparent; border: none; padding: 0; color: inherit; }
 
+/* 键盘可达性：焦点环只在键盘导航时出现 */
+button:focus-visible, .input:focus-visible, a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+  border-radius: 6px;
+}
+
 /* 数据表 */
 .dtable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .dtable th {
