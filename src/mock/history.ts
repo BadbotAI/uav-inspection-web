@@ -2,6 +2,7 @@
 import type { Task, Stack } from '../types';
 import { TASKS } from './tasks';
 import { ROUTES, routeDisplayName } from './routes';
+import { shiftDate } from './shift';
 
 // 确定性伪随机：同一任务每次生成的数据一致
 export function seeded(key: string): () => number {
@@ -78,9 +79,10 @@ function addSec(dateTime: string, sec: number): string {
 
 function buildTask(routeId: string, run: { date: string; time: string; k: number; device: string; operator: string }, seq: number): Task {
   const route = ROUTES.find(r => r.id === routeId)!;
+  // 编号取原始日期保持稳定（同步码由编号派生）；展示时间统一经 shift 平移
   const id = `T-${run.date.replace(/-/g, '')}-${pad(seq)}`;
   const rnd = seeded(id);
-  const startedAt = `${run.date}T${run.time}`;
+  const startedAt = shiftDate(`${run.date}T${run.time}`);
   const durationSec = Math.round(route.etaMin * 60 * (0.94 + rnd() * 0.12));
   const tmpl = TEMPLATES[routeId];
   const stacks: Stack[] = tmpl.map((t, i) => {
@@ -108,7 +110,7 @@ function buildTask(routeId: string, run: { date: string; time: string; k: number
     }
     return s;
   });
-  const stamp = `${run.date.replace(/-/g, '')}_${run.time.slice(0, 5).replace(':', '')}`;
+  const stamp = `${startedAt.slice(0, 10).replace(/-/g, '')}_${startedAt.slice(11, 16).replace(':', '')}`;
   return {
     id, routeId, routeName: routeDisplayName(route),
     startedAt, landedAt: addSec(startedAt, durationSec), durationSec,

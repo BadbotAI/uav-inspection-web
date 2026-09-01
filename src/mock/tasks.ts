@@ -1,6 +1,7 @@
 import type { Task } from '../types';
+import { shiftTask } from './shift';
 
-export const TASKS: Task[] = [
+const RAW_TASKS: Task[] = [
 // T1 今天，主展示任务
 { id:'T-20260727-01', routeId:'R-03', routeName:'A区全覆盖 · 高空扫',
   startedAt:'2026-07-27T09:41:02', landedAt:'2026-07-27T09:47:54', durationSec:412,
@@ -92,3 +93,6 @@ export const TASKS: Task[] = [
       layerCount:3, perLayerCount:60, totalCount:180, countConfidence:'medium' },
   ]},
 ];
+
+// 时间平移后的任务数据（详见 shift.ts）
+export const TASKS: Task[] = RAW_TASKS.map(shiftTask);

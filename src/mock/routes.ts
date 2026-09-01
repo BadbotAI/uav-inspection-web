@@ -1,4 +1,5 @@
 import type { Route, Scene } from '../types';
+import { shiftDate, shiftRoute } from './shift';
 
 // 可选扫描方式标签
 export const SCAN_TAGS = ['全覆盖', '高空扫', '低空扫', '分层扫', '补扫'];
@@ -12,7 +13,7 @@ export const SCENES: Scene[] = [
   { id: 'M-05', name: '四号仓 方仓', version: 1, builtAt: '2026-07-18', cloudSizeMb: 9.1 },
 ];
 
-export const ROUTES: Route[] = [
+const RAW_ROUTES: Route[] = [
   { id:'R-03', sceneId:'M-01', version:3, name:'A区', scanTags:['全覆盖', '高空扫'], recordedAt:'2026-07-15', recordedBy:'运维·李',
     note:'从东侧门起飞，贴顶棚下方 5.2m 高度往返扫。西南角有立柱，航线已绕开。适用于 A 区三个堆位。',
     waypointCount:24, etaMin:7, minClearanceM:6.5, altitudeM:5.2,
@@ -54,15 +55,18 @@ export const ROUTES: Route[] = [
     lastRunAt:null, lastRunStatus:null, runs:0, successRuns:0 },
 ];
 
+// 时间平移后的航线数据（详见 shift.ts）
+export const ROUTES: Route[] = RAW_ROUTES.map(shiftRoute);
+
 // 同步时"发现"的新航线（仅首次同步出现）
-export const NEW_ROUTE: Route = {
+export const NEW_ROUTE: Route = shiftRoute({
   id:'R-05', sceneId:'M-01', version:1, name:'A区东侧', scanTags:['低空扫'], recordedAt:'2026-07-27', recordedBy:'运维·李',
   note:'',
   waypointCount:18, etaMin:5, minClearanceM:4.1, altitudeM:4.8,
   lastRunAt:null, lastRunStatus:null, runs:0, successRuns:0,
-};
+});
 
-export const NEW_ROUTE_RECORDED_AT_TEXT = '2026-07-27 14:22';
+export const NEW_ROUTE_RECORDED_AT_TEXT = `${shiftDate('2026-07-27')} 14:22`;
 
 // 展示名：区域 + 扫描方式
 export function routeDisplayName(r: Pick<Route, 'name' | 'scanTags'>): string {
