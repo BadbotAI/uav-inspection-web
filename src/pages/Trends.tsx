@@ -71,7 +71,7 @@ export function Trends() {
         <Card>
           <div className="flex items-center justify-between">
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{route?.name} · {route?.scanTags.join('/')}</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{route?.name}</div>
               <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{scene?.name} · 各{stacked ? '货位' : '堆体'}体积随巡检时间变化（m³）</div>
             </div>
           </div>
@@ -84,7 +84,7 @@ export function Trends() {
           <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>正值为入库，负值为出库（m³）</div>
           <div className="mt-4"><DiffBars items={diffs} height={150} /></div>
           <div className="mt-4 leading-[1.6]" style={{ fontSize: 11.5, color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-subtle)', paddingTop: 10 }}>
-            体积差值受两次测算各自 ±{Math.max(...runs.map(t => t.volumeErrPct)).toFixed(1)}% 误差影响，小于误差带的变化不应作为出入库依据。
+            体积差值包含测算误差，幅度较小的变化不宜直接作为出入库依据，必要时安排补扫复核。
           </div>
         </Card>
       </div>
@@ -111,7 +111,7 @@ export function Trends() {
               <tr>
                 <th>巡检时间</th><th>任务</th><th>状态</th>
                 {stackIds.map(id => <th key={id} style={{ textAlign: 'right' }}>{runs[0].stacks.find(s => s.id === id)?.name ?? id}</th>)}
-                <th style={{ textAlign: 'right' }}>合计 m³</th><th style={{ textAlign: 'right' }}>较上次</th><th style={{ textAlign: 'right' }}>误差</th>
+                <th style={{ textAlign: 'right' }}>合计 m³</th><th style={{ textAlign: 'right' }}>较上次</th>
               </tr>
             </thead>
             <tbody>
@@ -125,7 +125,6 @@ export function Trends() {
                     {stackIds.map(id => { const s = t.stacks.find(x => x.id === id); return <td key={id} className="mono" style={{ textAlign: 'right' }}>{s ? s.volumeM3.toFixed(1) : '—'}</td>; })}
                     <td className="mono" style={{ textAlign: 'right', fontWeight: 500 }}>{totalVolume(t).toFixed(1)}</td>
                     <td className="mono" style={{ textAlign: 'right', color: d === null ? 'var(--text-placeholder)' : d >= 0 ? 'var(--brand-subtle-text)' : 'var(--sig3d-ink)' }}>{d === null ? '—' : `${d >= 0 ? '+' : ''}${d.toFixed(1)}`}</td>
-                    <td className="mono" style={{ textAlign: 'right', color: 'var(--text-tertiary)' }}>±{t.volumeErrPct.toFixed(1)}%</td>
                   </tr>
                 );
               })}

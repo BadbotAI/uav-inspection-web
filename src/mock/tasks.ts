@@ -3,7 +3,7 @@ import { shiftTask } from './shift';
 
 const RAW_TASKS: Task[] = [
 // T1 今天，主展示任务
-{ id:'T-20260727-01', routeId:'R-03', routeName:'A区全覆盖 · 高空扫',
+{ id:'T-20260727-01', routeId:'R-03', routeName:'A区',
   startedAt:'2026-07-27T09:41:02', landedAt:'2026-07-27T09:47:54', durationSec:412,
   coveragePct:100, status:'success', operator:'操作员·张', siteAckAt:'2026-07-27T09:40:51',
   waypointDone:24, waypointTotal:24, trackLengthM:186.4, avgSpeedMs:1.4, maxSpeedMs:1.9,
@@ -26,7 +26,7 @@ const RAW_TASKS: Task[] = [
   ]},
 
 // T2 三天前，用于 H-00「上次巡检」与 R-01 的点云底图来源
-{ id:'T-20260724-01', routeId:'R-03', routeName:'A区全覆盖 · 高空扫',
+{ id:'T-20260724-01', routeId:'R-03', routeName:'A区',
   startedAt:'2026-07-24T10:05:11', landedAt:'2026-07-24T10:12:07', durationSec:416,
   coveragePct:100, status:'success', operator:'操作员·张', siteAckAt:'2026-07-24T10:04:58',
   waypointDone:24, waypointTotal:24, trackLengthM:186.1, avgSpeedMs:1.4, maxSpeedMs:1.9,
@@ -47,7 +47,7 @@ const RAW_TASKS: Task[] = [
   ]},
 
 // T3 中断任务，用于验证「部分覆盖」全链路标注
-{ id:'T-20260719-02', routeId:'R-02', routeName:'A区西侧 · 补扫',
+{ id:'T-20260719-02', routeId:'R-02', routeName:'A区西侧',
   startedAt:'2026-07-19T15:30:44', landedAt:'2026-07-19T15:32:08', durationSec:84,
   coveragePct:43, status:'aborted', operator:'操作员·王', siteAckAt:'2026-07-19T15:30:20',
   waypointDone:5, waypointTotal:11, trackLengthM:38.2, avgSpeedMs:1.3, maxSpeedMs:1.6,
@@ -66,7 +66,7 @@ const RAW_TASKS: Task[] = [
   ]},
 
 // T4 规则码垛任务，用于验证 S-02 分层计数
-{ id:'T-20260712-01', routeId:'R-04', routeName:'B区码垛区 · 分层扫',
+{ id:'T-20260712-01', routeId:'R-04', routeName:'B区码垛区',
   startedAt:'2026-07-12T09:12:30', landedAt:'2026-07-12T09:17:08', durationSec:278,
   coveragePct:100, status:'success', operator:'操作员·张', siteAckAt:'2026-07-12T09:12:14',
   waypointDone:16, waypointTotal:16, trackLengthM:121.7, avgSpeedMs:1.1, maxSpeedMs:1.4,

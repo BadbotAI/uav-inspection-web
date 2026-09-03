@@ -62,19 +62,17 @@ export function processOf(task: Task, route?: Route): ProcessData {
     route_complete: '航线执行完成，沿原航线返航',
     user: '操作员长按返航，任务中断',
     auto_timeout: '悬停超时，自动返航',
-    safety: '定位质量不足，安全返航',
+    safety: '定位丢失，原地降落',
     rc_override: '遥控器接管，任务中断',
   };
   events.push({ time: hms(task.startedAt, dur - (aborted ? 8 : 26)), type: 'return_start', label: returnLabel[task.returnTrigger] });
   events.push({ time: hms(task.startedAt, dur), type: 'landed', label: '降落，起降点误差 ' + (3 + Math.round(rnd() * 5)) + 'cm' });
 
+  // 处理阶段（研究员口径：不细分算法内部步骤，只给整体环节与耗时）
   const stages: ProcessStage[] = [
-    { name: '点云配准', sec: Math.round(task.volumeCalcSec * 0.22), ok: true },
-    { name: '去噪与抽稀', sec: Math.round(task.volumeCalcSec * 0.14), ok: true },
-    { name: '地面基准拟合', sec: Math.round(task.volumeCalcSec * 0.1), ok: true },
-    { name: '堆体分割', sec: Math.round(task.volumeCalcSec * 0.2), ok: true },
-    { name: '体积计算', sec: Math.round(task.volumeCalcSec * 0.24), ok: true },
-    { name: '报告生成', sec: Math.round(task.volumeCalcSec * 0.1), ok: true },
+    { name: '数据回传', sec: Math.round(task.volumeCalcSec * 0.3), ok: true },
+    { name: '点云处理', sec: Math.round(task.volumeCalcSec * 0.45), ok: true },
+    { name: '结果计算', sec: Math.round(task.volumeCalcSec * 0.25), ok: true },
   ];
 
   const data = { telemetry, waypoints, events, stages };

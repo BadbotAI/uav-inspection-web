@@ -19,7 +19,7 @@ type Tab = 'overview' | 'model' | 'process' | 'report' | 'files';
 const TABS: [Tab, string][] = [['overview', '概览'], ['model', '三维成果'], ['process', '飞行过程'], ['report', '报告'], ['files', '附件下载']];
 const DENSITY = 0.75;
 const RETURN_TEXT: Record<Task['returnTrigger'], string> = {
-  route_complete: '航线执行完成', user: '操作员手动返航', auto_timeout: '悬停超时自动返航', safety: '安全返航', rc_override: '遥控器接管',
+  route_complete: '航线执行完成', user: '操作员手动返航', auto_timeout: '悬停超时自动返航', safety: '定位丢失原地降落', rc_override: '遥控器接管',
 };
 const KIND_ICON: Record<Attachment['kind'], React.ReactNode> = {
   pcd: <IconBox size={15} />, json: <IconDoc size={15} />, pdf: <IconDoc size={15} />, mp4: <IconVideo size={15} />, zip: <IconCamera size={15} />, csv: <IconDoc size={15} />,
@@ -111,10 +111,8 @@ export function TaskDetail() {
           <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(172px, 1fr))', gap: 12 }}>
             <Stat label={stacked ? '合计件数' : '合计体积'} value={stacked ? totalCount(task).toLocaleString() : vol.toFixed(1)} unit={stacked ? '件' : 'm³'} sub={stacked ? `${vol.toFixed(1)} m³ · ${task.stacks.length} 个货位` : `折算 ${(vol * DENSITY).toFixed(1)} t · ${task.stacks.length} 个堆体`} />
             <Stat label="覆盖度" value={task.coveragePct} unit="%" sub={`完成航点 ${task.waypointDone}/${task.waypointTotal}`} tone={task.coveragePct < 100 ? 'warning' : undefined} />
-            <Stat label="体积误差" value={`±${task.volumeErrPct.toFixed(1)}`} unit="%" sub="规格上限 ±5%" tone={task.volumeErrPct > 4 ? 'warning' : undefined} />
-            <Stat label="定位精度" value={`±${task.locP95Cm.toFixed(1)}`} unit="cm" sub="P95" />
             <Stat label="飞行时长" value={fmtDuration(task.durationSec)} sub={`轨迹 ${task.trackLengthM.toFixed(0)} m · 均速 ${task.avgSpeedMs} m/s`} />
-            <Stat label="处理状态" value="完成" sub={`机载处理 ${task.volumeCalcSec}s · 数据包 ${fmtMb(packSizeOf(task))}`} />
+            <Stat label="处理状态" value="完成" sub={`处理耗时 ${task.volumeCalcSec}s · 数据包 ${fmtMb(packSizeOf(task))}`} />
           </div>
 
           <div className="grid mt-4" style={{ gridTemplateColumns: 'minmax(0, 1.6fr) minmax(320px, 1fr)', gap: 16 }}>
@@ -159,13 +157,15 @@ export function TaskDetail() {
                     <span style={{ fontSize: 13, fontWeight: 500 }}>{s.name}</span>
                     <span className="mono" style={{ fontSize: 13 }}>{s.volumeM3.toFixed(1)} m³</span>
                   </div>
-                  <div className="mt-1 leading-[1.55]" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{s.occlusionNote}</div>
+                  <div className="mt-1" style={{ fontSize: 11, color: s.issue ? 'var(--warning)' : 'var(--text-tertiary)' }}>
+                    {s.position} · 覆盖 {s.surfaceCoverPct}%{s.issue ? ` · ${ISSUE_TEXT[s.issue]}` : ''}
+                  </div>
                 </button>
               ))}
             </Card>
             <Card pad={14}>
               <div className="dlabel">数据质量</div>
-              {[['点云完整度', `${task.cloudCompletePct}%`], ['轨迹完整度', `${task.trackCompletePct}%`], ['定位精度 P95', `±${task.locP95Cm.toFixed(1)} cm`], ['体积误差', `±${task.volumeErrPct.toFixed(1)}%`], ['稀疏点云', fmtMb(atts[0].sizeMb)], ['完整点云', fmtMb(task.cloudSizeMb)]].map(([k, v]) => (
+              {[['轨迹完整度', `${task.trackCompletePct}%`], ['稀疏点云', fmtMb(atts[0].sizeMb)], ['完整点云', fmtMb(task.cloudSizeMb)]].map(([k, v]) => (
                 <div key={k} className="flex justify-between mt-2" style={{ fontSize: 12 }}><span style={{ color: 'var(--text-tertiary)' }}>{k}</span><span className="mono">{v}</span></div>
               ))}
             </Card>
@@ -283,7 +283,7 @@ export function TaskDetail() {
                   <th>{unit}</th><th>位置</th><th>类型</th>
                   <th style={{ textAlign: 'right' }}>体积 m³</th>
                   {stacked && <><th style={{ textAlign: 'right' }}>分层</th><th style={{ textAlign: 'right' }}>件数</th><th>标签识别</th></>}
-                  <th style={{ textAlign: 'right' }}>表面覆盖</th><th>置信度</th><th>异常</th><th>遮挡 / 说明</th>
+                  <th style={{ textAlign: 'right' }}>表面覆盖</th><th>异常</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,9 +299,7 @@ export function TaskDetail() {
                       <td>{s.tagType ? (s.tagCode ? <span className="mono" style={{ fontSize: 11.5 }}>{TAG_NAME[s.tagType]} {s.tagCode}</span> : <span style={{ fontSize: 11.5, color: 'var(--warning)' }}>{TAG_NAME[s.tagType]}标签未识别</span>) : '—'}</td>
                     </>}
                     <td className="mono" style={{ textAlign: 'right' }}>{s.surfaceCoverPct}%</td>
-                    <td><ConfPill c={s.volumeConfidence} /></td>
                     <td>{s.issue ? <span className="inline-flex items-center gap-1" style={{ fontSize: 11.5, color: 'var(--warning)' }}><IconWarn size={12} />{ISSUE_TEXT[s.issue]}</span> : <span style={{ color: 'var(--text-placeholder)', fontSize: 11.5 }}>无</span>}</td>
-                    <td style={{ fontSize: 11.5, color: 'var(--text-secondary)', maxWidth: 300 }}>{s.occlusionNote}</td>
                   </tr>
                 ))}
               </tbody>
@@ -341,7 +339,6 @@ export function TaskDetail() {
                 ['巡检时间', fmtDT(task.startedAt)], ['场景 / 航线', `${scene?.name} · ${task.routeName}`],
                 ['任务状态', STATUS_TEXT[task.status]], ['操作员', task.operator],
                 ['覆盖度', `${task.coveragePct}%（航点 ${task.waypointDone}/${task.waypointTotal}）`], ['飞行时长', fmtDuration(task.durationSec)],
-                ['定位精度', `±${task.locP95Cm.toFixed(1)} cm（P95）`], ['体积误差', `±${task.volumeErrPct.toFixed(1)}%`],
                 ['处理状态', '机载处理完成'], ['返航触发', RETURN_TEXT[task.returnTrigger]],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between" style={{ fontSize: 12, padding: '3px 0', borderBottom: '1px solid rgba(16,24,40,.07)' }}><span style={{ color: '#737E90' }}>{k}</span><span className="mono">{v}</span></div>
@@ -358,7 +355,7 @@ export function TaskDetail() {
             <div className="mt-6" style={{ fontSize: 13.5, fontWeight: 600 }}>二、{unit}明细</div>
             <table className="mt-2" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5 }}>
               <thead><tr style={{ borderBottom: '1px solid #1B1F27' }}>
-                {[unit, '位置', '体积 m³', stacked ? '件数' : '覆盖', stacked ? '标签' : '置信度', '说明'].map(h => <th key={h} style={{ textAlign: 'left', padding: '5px 4px', fontWeight: 500 }}>{h}</th>)}
+                {[unit, '位置', '体积 m³', stacked ? '件数' : '覆盖', ...(stacked ? ['标签'] : []), '异常'].map(h => <th key={h} style={{ textAlign: 'left', padding: '5px 4px', fontWeight: 500 }}>{h}</th>)}
               </tr></thead>
               <tbody>
                 {task.stacks.map(s => (
@@ -367,8 +364,10 @@ export function TaskDetail() {
                     <td style={{ padding: '6px 4px' }}>{s.position}</td>
                     <td className="mono" style={{ padding: '6px 4px' }}>{s.volumeM3.toFixed(1)}</td>
                     <td className="mono" style={{ padding: '6px 4px' }}>{stacked ? `${s.totalCount?.toLocaleString()}（${s.layerCount}×${s.perLayerCount}）` : `${s.surfaceCoverPct}%`}</td>
-                    <td className="mono" style={{ padding: '6px 4px', color: stacked && !s.tagCode ? '#B97A17' : undefined }}>{stacked ? (s.tagCode ? `${TAG_NAME[s.tagType!]} ${s.tagCode}` : '未识别') : `置信 ${s.volumeConfidence === 'high' ? '高' : s.volumeConfidence === 'medium' ? '中' : '低'}`}</td>
-                    <td style={{ padding: '6px 4px', color: s.issue ? '#B97A17' : '#5A6272' }}>{s.issue ? `${ISSUE_TEXT[s.issue]}；` : ''}{s.occlusionNote}</td>
+                    {stacked && (
+                      <td className="mono" style={{ padding: '6px 4px', color: !s.tagCode ? '#B97A17' : undefined }}>{s.tagCode ? `${TAG_NAME[s.tagType!]} ${s.tagCode}` : '未识别'}</td>
+                    )}
+                    <td style={{ padding: '6px 4px', color: s.issue ? '#B97A17' : '#5A6272' }}>{s.issue ? ISSUE_TEXT[s.issue] : '无'}</td>
                   </tr>
                 ))}
               </tbody>
