@@ -19,7 +19,7 @@ type Tab = 'overview' | 'model' | 'process' | 'report' | 'files';
 const TABS: [Tab, string][] = [['overview', '概览'], ['model', '三维成果'], ['process', '飞行过程'], ['report', '报告'], ['files', '附件下载']];
 const DENSITY = 0.75;
 const RETURN_TEXT: Record<Task['returnTrigger'], string> = {
-  route_complete: '航线执行完成', user: '操作员手动返航', auto_timeout: '悬停超时自动返航', safety: '定位丢失原地降落', rc_override: '遥控器接管',
+  route_complete: '航线执行完成', user: '操作员手动返航', auto_timeout: '悬停超时自动返航', safety: '低电量安全返航', loc_lost: '定位丢失原地降落', rc_override: '遥控器接管',
 };
 const KIND_ICON: Record<Attachment['kind'], React.ReactNode> = {
   pcd: <IconBox size={15} />, json: <IconDoc size={15} />, pdf: <IconDoc size={15} />, mp4: <IconVideo size={15} />, zip: <IconCamera size={15} />, csv: <IconDoc size={15} />,

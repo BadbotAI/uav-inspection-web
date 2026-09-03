@@ -62,7 +62,8 @@ export function processOf(task: Task, route?: Route): ProcessData {
     route_complete: '航线执行完成，沿原航线返航',
     user: '操作员长按返航，任务中断',
     auto_timeout: '悬停超时，自动返航',
-    safety: '定位丢失，原地降落',
+    safety: '低电量，安全返航',
+    loc_lost: '定位丢失，原地降落',
     rc_override: '遥控器接管，任务中断',
   };
   events.push({ time: hms(task.startedAt, dur - (aborted ? 8 : 26)), type: 'return_start', label: returnLabel[task.returnTrigger] });

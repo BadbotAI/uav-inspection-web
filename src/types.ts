@@ -84,7 +84,7 @@ export interface Task {
   trackLengthM: number;
   avgSpeedMs: number;
   maxSpeedMs: number;
-  returnTrigger: 'user' | 'route_complete' | 'auto_timeout' | 'safety' | 'rc_override';
+  returnTrigger: 'user' | 'route_complete' | 'auto_timeout' | 'safety' | 'loc_lost' | 'rc_override';
   locP95Cm: number;
   cloudCompletePct: number;
   trackCompletePct: number;
