@@ -1,7 +1,7 @@
 // 基础组件与格式化：与手机端同一套设计语言（钢蓝 / 浅色 / 细描边卡片），桌面尺寸
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
-import type { Task, Confidence } from '../types';
+import type { Task } from '../types';
 
 // ---------- 格式化 ----------
 const p2 = (n: number) => String(n).padStart(2, '0');
@@ -15,7 +15,6 @@ export const fmtDuration = (sec: number) => `${Math.floor(sec / 60)}分${p2(Math
 export const fmtMb = (mb: number) => (mb >= 1024 ? `${(mb / 1024).toFixed(2)} GB` : mb >= 10 ? `${Math.round(mb)} MB` : `${mb.toFixed(2)} MB`);
 export const daysAgo = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
 export const STATUS_TEXT: Record<Task['status'], string> = { success: '完成', aborted: '中断', failed: '失败' };
-export const CONF_TEXT: Record<Confidence, string> = { high: '高', medium: '中', low: '低' };
 export const TAG_NAME = { qr: '二维码', barcode: '条码', rfid: 'RFID' } as const;
 export const ISSUE_TEXT = {
   unclear: '识别不清晰', occluded: '部分遮挡', uncovered: '未完整覆盖', changed: '变化异常',
@@ -145,9 +144,6 @@ export function Tag({ children, tone = 'neutral' }: { children: React.ReactNode;
 }
 export const StatusPill = ({ task }: { task: Task }) => (
   <Pill tone={task.status === 'success' ? 'hi' : task.status === 'aborted' ? 'mid' : 'lo'}>{STATUS_TEXT[task.status]}</Pill>
-);
-export const ConfPill = ({ c }: { c: Confidence }) => (
-  <Pill tone={c === 'high' ? 'hi' : c === 'medium' ? 'mid' : 'lo'}>置信 {CONF_TEXT[c]}</Pill>
 );
 
 export function Stat({ label, value, unit, sub, tone }: { label: string; value: React.ReactNode; unit?: string; sub?: React.ReactNode; tone?: 'danger' | 'warning' }) {

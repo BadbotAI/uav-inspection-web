@@ -9,7 +9,7 @@ import { processOf, attachmentsOf, packSizeOf, photoCountOf } from '../data/proc
 import { Viewer3D } from '../components/Viewer3D';
 import { LineChart } from '../components/Charts';
 import {
-  Button, Card, Section, Stat, StatusPill, ConfPill, Pill, Tag, Check, CodeChip, EmptyState,
+  Button, Card, Section, Stat, StatusPill, Pill, Tag, Check, CodeChip, EmptyState,
   IconChevronLeft, IconDownload, IconPrint, IconDoc, IconWarn, IconCheck, IconCamera, IconVideo, IconBox, IconPin,
   fmtDT, fmtDate, fmtTime, fmtDuration, fmtMb, totalVolume, totalCount, isStacked, TAG_NAME, ISSUE_TEXT, STATUS_TEXT,
 } from '../components/ui';
